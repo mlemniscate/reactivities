@@ -5,7 +5,7 @@ namespace API
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
 
@@ -16,7 +16,8 @@ namespace API
             try
             {
                 var context = services.GetRequiredService<DataContext>();
-                context.Database.Migrate();
+                await context.Database.MigrateAsync();
+                await Seed.SeedData(context);
             }
             catch (Exception ex)
             {
@@ -24,7 +25,7 @@ namespace API
                 logger.LogError(ex, "An error occured during migration");
             }
 
-            host.Run();
+            await host.RunAsync();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
